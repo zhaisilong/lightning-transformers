@@ -3,7 +3,7 @@
 ## 测试 pl-transformers
 
 ```shell
-python train.py task=nlp/translation dataset=nlp/translation/wmt16 backbone.pretrained_model_name_or_path=google/mt5-base
+python train.py task=nlp/translation dataset=nlp/translation/wmt16
 ```
 
 ## 从 csv 数据集到 json 数据集
