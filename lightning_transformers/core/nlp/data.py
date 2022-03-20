@@ -48,17 +48,20 @@ class HFDataModule(TokenizerDataModule):
         if self.cfg.test_file is not None:
             data_files["test"] = self.cfg.test_file
 
+        # Allow data files from hugging face
+        # 如果本地自建数据集为空，则从 hugging face 获取
         data_files = data_files if data_files else None
         if self.cfg.dataset_name is not None:
             # Download and load the Huggingface dataset.
             dataset = load_dataset(
                 path=self.cfg.dataset_name,
                 name=self.cfg.dataset_config_name,
-                cache_dir=self.cfg.cache_dir,
+                cache_dir=self.cfg.cache_dir,  # Specify the cache_dir
                 data_files=data_files,
             )
 
         # Load straight from data files
+        #
         elif self.cfg.datafiles:
             extension = self.cfg.train_file.split(".")[-1]
             dataset = load_dataset(extension, data_files=data_files)
@@ -79,14 +82,15 @@ class HFDataModule(TokenizerDataModule):
                     )
                 dataset[subset] = dataset.pop(special_subset_name)
 
-        return dataset
+        return dataset  # 此处返回 Hugging face datasets 生成的数据集
 
     def split_dataset(self, dataset: Union[Dataset, DatasetDict]) -> Union[Dataset, DatasetDict]:
+
         if self.cfg.train_val_split is not None:
             split = dataset["train"].train_test_split(self.cfg.train_val_split)
             dataset["train"] = split["train"]
             dataset["validation"] = split["test"]
-        dataset = self._select_samples(dataset)
+        dataset = self._select_samples(dataset)  # 限制数据条数
         return dataset
 
     def _select_samples(self, dataset: Union[Dataset, DatasetDict]) -> Union[Dataset, DatasetDict]:
@@ -97,6 +101,7 @@ class HFDataModule(TokenizerDataModule):
         )
         for column_name, n_samples in samples:
             if n_samples is not None and column_name in dataset:
+                # 如果原来列数小，用原来的
                 indices = range(min(len(dataset[column_name]), n_samples))
                 dataset[column_name] = dataset[column_name].select(indices)
         return dataset

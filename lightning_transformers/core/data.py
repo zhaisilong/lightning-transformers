@@ -23,11 +23,11 @@ class TransformerDataModule(pl.LightningDataModule):
     def __init__(self, cfg: TransformerDataConfig = TransformerDataConfig()) -> None:
         super().__init__()
         self.cfg = cfg
-        self.ds = None
+        self.ds = None  # datasets
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(
-            self.ds["train"],
+            self.ds["train"],   # datasets
             batch_size=self.batch_size,
             num_workers=self.cfg.num_workers,
             collate_fn=self.collate_fn,

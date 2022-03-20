@@ -1,0 +1,57 @@
+task/:
+  - nlp/:
+      - __init__.py
+      - language_modeling/:
+          - __init__.py:
+              - LanguageModelingDataModule -> lightning_transformers.task.nlp.language_modeling.data
+              - LanguageModelingTransformer -> lightning_transformers.task.nlp.language_modeling.model
+          - config.py:
+              - LanguageModelingDataConfig(HFTransformerDataConfig)
+          - data.py:
+              - LanguageModelingDataModule(HFDataModule):
+                  - process_data.def
+                  - effective_block_size.property
+                  - tokenize_function.staticmethod
+                  - convert_to_features.staticmethod
+                  - collate_fn.property
+          - model.py:
+              - LanguageModelingTransformer(HFTransformer):
+                  - on_fit_start.def
+                  - training_step.def
+                  - validation_step.def
+                  - test_step.def
+                  - hf_pipeline_task.def
+      - translation/:
+          - datasets/:
+              - __init__.py:
+                  - WMT16TranslationDataModule -> lightning_transformers.task.nlp.translation.datasets.wmt16
+              - wmt16.py:
+                  - WMT16TranslationDataModule(TranslationDataModule) -> lightning_transformers.task.nlp.translation.data
+          - config.py:
+              - TranslationConfig(HFSeq2SeqConfig)
+              - TranslationDataConfig(Seq2SeqDataConfig)
+          - data.py:
+              - TranslationDataModule(Seq2SeqDataModule) -> lightning_transformers.core.nlp.seq2seq
+              - TranslationDataConfig -> lightning_transformers.task.nlp.translation.config
+          - model.py:
+              - TranslationTransformer(Seq2SeqTransformer) ->lightning_transformers.core.nlp.seq2seq:
+                  - compute_generate_metrics.def
+                  - configure_metrics.def
+                  - initialize_model_specific_parameters.def
+                  - hf_pipeline_task.property
+      - masked_language_modeling/:
+          - __init__.py:
+              - MaskedLanguageModelingDataModule -> lightning_transformers.task.nlp.masked_language_modeling.data
+              - MaskedLanguageModelingTransformer -> lightning_transformers.task.nlp.masked_language_modeling.model
+          - config.py:
+              - MaskedLanguageModelingDataConfig(HFTransformerDataConfig) -> lightning_transformers.core.nlp
+          - data.py:
+              - MaskedLanguageModelingDataModule(HFDataModule) -> lightning_transformers.core.nlp
+          - model.py:
+              - MaskedLanguageModelingTransformer(HFTransformer) -> lightning_transformers.core.nlp:
+                - on_fit_start.def
+                - _step.def
+                - training_step.def
+                - validation_step.def
+                - test_step.def
+                - hf_pipeline_task(self).property

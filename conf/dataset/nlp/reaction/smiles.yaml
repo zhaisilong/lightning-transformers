@@ -1,0 +1,12 @@
+# @package dataset
+defaults:
+  - nlp/default
+_target_: lightning_transformers.task.nlp.reaction.SMILESReactionDataModule
+cfg:
+  dataset_name: smiles
+  dataset_config_name: 'reactant-product' # WMT translation datasets: ['cs-en', 'de-en', 'fi-en', 'ro-en', 'ru-en', 'tr-en']
+  source_language: 'reactant'
+  target_language: 'product'
+  max_source_length: 128
+  max_target_length: 128
+  preprocessing_num_workers: 4

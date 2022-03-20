@@ -3,7 +3,7 @@ import subprocess
 from unittest import mock
 from unittest.mock import ANY, MagicMock
 
-import pytest
+# import pytest
 from omegaconf import OmegaConf
 from pytorch_lightning import LightningDataModule
 

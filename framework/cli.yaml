@@ -1,0 +1,10 @@
+- cli/:
+    - __init__.py: None
+    - predict.py:
+        - run.def -> List[Dict[str, Any]]
+        - main.def
+        - hydra_entry.hydra
+    - train.py:
+        - run.def -> None
+        - main.def
+        - hydra_entry.hydra

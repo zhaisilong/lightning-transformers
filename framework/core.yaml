@@ -1,0 +1,41 @@
+core/:
+  - nlp/:
+
+  - __inint__.py:
+      - TransformerDataModule.class -> lightning_transformers.core.data
+      - TransformersBaseFinetuning.class -> lightning_transformers.core.finetuning
+      - LitTransformer.class -> lightning_transformers.core.model
+      - TaskTransformer.class -> lightning_transformers.core.model
+  - callback.py:
+      - TransformerSparseMLCallback(SparseMLCallback)
+      - CUDACallback(Callback)
+  - config.py: # dataclass
+      - ramsformerDataConfig.class
+      - OptimizerConfig.class
+      - SchedulerConfig.class
+      - TrainerConfig.class
+      - TaskConfig.class:
+          - optimizer.property -> OptimizerConfig
+          - scheduler.property -> SchedulerConfig
+  - data.py:
+      - TransformerDataModule(pl.LightningDataModule):
+          - train_dataloader.def
+          - val_dataloader.def
+          - test_dataloader.def
+          - TokenizerDataModule(TransformerDataModule):
+              - tokenizer.property <- param
+  - finetuning.py:
+      - TransformersBaseFinetuning(pl.callbacks.BaseFinetuning):
+          - freeze_before_training.def
+          - freeze_using_attr_names.def
+          - finetune_function.def: pass
+  - instantiator.py:
+      - Instantiator.class
+      - HydraInstantiator(Instantiator)
+  - loggers.py:
+      - WABLogger(WandbLogger)
+  - model.py:
+      - LitTransformer(pl.LightningModule)
+      - TaskTransformer(LitTransformer)
+  - utils.py:
+      - set_ignore_warnings.def

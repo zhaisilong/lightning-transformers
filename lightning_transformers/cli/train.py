@@ -38,34 +38,47 @@ def run(
     if ignore_warnings:
         set_ignore_warnings()
 
-    data_module_kwargs = {}
+    data_module_kwargs = {}  # 数据模型的参数
+    # 如果指定 tokenizer, 则把 tokenizer 的配置加入 data_module 的参数组
     if tokenizer is not None:
-        data_module_kwargs["tokenizer"] = tokenizer
+        data_module_kwargs["tokenizer"] = tokenizer  # 字符串
 
+    # 初始化一个数据模型 配置是 TransformerDataConfig 和 data_module_kwargs
     data_module: TransformerDataModule = instantiator.data_module(dataset, **data_module_kwargs)
     if data_module is None:
         raise ValueError("No dataset found. Hydra hint: did you set `dataset=...`?")
     if not isinstance(data_module, LightningDataModule):
+        # 数据模型必须从 LightningDataModule 继承
         raise ValueError(
             "The instantiator did not return a DataModule instance." " Hydra hint: is `dataset._target_` defined?`"
         )
+    
+    # make assignments here (val/train/test split)
+    # called on every process in DDP
+    # 指定数据模型载入的阶段 stage = fit 
     data_module.setup("fit")
 
+    # 从任务中导入参数，并且获取 数据模型的参数
     model: TaskTransformer = instantiator.model(task, model_data_kwargs=getattr(data_module, "model_data_kwargs", None))
+
+    # 初始化训练器和日志
     trainer = instantiator.trainer(
         trainer,
         logger=logger,
     )
 
+    # 训练模型
     trainer.fit(model, datamodule=data_module)
+    
+    # 测试模型
     if run_test_after_fit:
         trainer.test(model, datamodule=data_module)
 
 
-def main(cfg: DictConfig) -> None:
-    rank_zero_info(OmegaConf.to_yaml(cfg))
-    instantiator = HydraInstantiator()
-    logger = instantiator.logger(cfg)
+def main(cfg: DictConfig) -> None:  # cfg 是一个全配置，由 hydra.mian() 引入
+    rank_zero_info(OmegaConf.to_yaml(cfg))  # 只打印必要信息
+    instantiator = HydraInstantiator()  # Hydra 初始化器，完成对配置的加载
+    logger = instantiator.logger(cfg)  # 从配置初始化器中获取 logger
     run(
         instantiator,
         ignore_warnings=cfg.get("ignore_warnings"),
