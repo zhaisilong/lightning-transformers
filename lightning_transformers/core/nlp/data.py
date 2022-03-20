@@ -61,7 +61,7 @@ class HFDataModule(TokenizerDataModule):
             )
 
         # Load straight from data files
-        #
+        # 这个参数好像没有在 conf 中展示
         elif self.cfg.datafiles:
             extension = self.cfg.train_file.split(".")[-1]
             dataset = load_dataset(extension, data_files=data_files)
@@ -85,7 +85,10 @@ class HFDataModule(TokenizerDataModule):
         return dataset  # 此处返回 Hugging face datasets 生成的数据集
 
     def split_dataset(self, dataset: Union[Dataset, DatasetDict]) -> Union[Dataset, DatasetDict]:
+        """数据分割
 
+        如果指定 cfg.train_val_split 将训练集展开为训练和验证集 0.75 0.25 分
+        """
         if self.cfg.train_val_split is not None:
             split = dataset["train"].train_test_split(self.cfg.train_val_split)
             dataset["train"] = split["train"]
