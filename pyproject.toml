@@ -1,24 +1,28 @@
+[tool.poetry]
+name = "pltrans"
+version = "0.1.0"
+description = ""
+authors = ["zhaisilong <zhaisilong@outlook.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+jupyter = "^1.0.0"
+datasets = "^2.0.0"
+pytorch-lightning = "^1.6.0"
+numpy = "^1.22.3"
+tqdm = "^4.64.0"
+torchmetrics = {extras = ["text"], version = "^0.7.3"}
+transformers = "^4.18.0"
+hydra-core = "^1.1.1"
+sentencepiece = "^0.1.96"
+
+[tool.poetry.dev-dependencies]
+
 [build-system]
-requires = [
-    "setuptools",
-    "wheel",
-]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
-[tool.black]
-# https://github.com/psf/black
-line-length = 120
-exclude = "(.eggs|.git|.hg|.mypy_cache|.venv|_build|buck-out|build|dist)"
-
-[tool.isort]
-known_first_party = [
-    "lightning_transformers",
-    "tests",
-    "conf",
-    "examples",
-]
-skip_glob = []
-profile = "black"
-line_length = 120
-
-[tool.autopep8]
-ignore = ["E731", "E203"]
+[[tool.poetry.source]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+default = true
